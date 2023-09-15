@@ -34,6 +34,49 @@ public class ARMMortgage implements Mortgage {
         return rate;
     }
 
+    // Getter and Setter for principal
+    public double getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(double principal) {
+        this.principal = principal;
+    }
+
+    // Getter and Setter for initialRate
+    public double getInitialRate() {
+        return initialRate;
+    }
+
+    public void setInitialRate(double initialRate) {
+        this.initialRate = initialRate;
+    }
+
+    // Getter and Setter for term (with term type consideration)
+    public int getTerm() {
+        return term;
+    }
+
+    public void setTerm(int term, String termType) {
+        if ("y".equalsIgnoreCase(termType)) {
+            this.term = term * 12;  // Convert years to months
+        } else if ("m".equalsIgnoreCase(termType)) {
+            this.term = term;       // Term is already in months
+        } else {
+            throw new IllegalArgumentException("Invalid term type. Use 'y' for years or 'm' for months.");
+        }
+    }
+
+
+    // Getter and Setter for rateChanges
+    public List<RateChange> getRateChanges() {
+        return rateChanges;
+    }
+
+    public void setRateChanges(List<RateChange> rateChanges) {
+        this.rateChanges = rateChanges;
+    }
+
     public double calculateMonthlyPayment(int month) { // As monthly payments change, the month should be specified
         double monthlyInterestRate = getRateForMonth(month) / 12;
         return principal * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -term));
