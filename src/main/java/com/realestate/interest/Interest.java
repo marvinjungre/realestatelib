@@ -1,4 +1,4 @@
-package com.realestate.math.interest;
+package com.realestate.interest;
 
 public class Interest {
 
@@ -124,9 +124,5 @@ public class Interest {
         }
         return Math.pow(endValue / principal, 1.0 / (365 * years)) - 1;
     }
-
-
-
-
 
 }

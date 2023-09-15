@@ -1,8 +1,8 @@
-package com.realestate.math;
+package com.realestate.interest;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import com.realestate.math.interest.Interest;
+import com.realestate.interest.Interest;
 
 public class InterestTest {
 
