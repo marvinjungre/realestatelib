@@ -56,10 +56,22 @@ public class Interest {
 
     // Finds Simple Interest Rate given principal, end value, and time
     public static double findSimpleInterest(double principal, double endValue, double time) {
+        if (principal == 0) {
+            throw new IllegalArgumentException("Principal cannot be zero.");
+        }
+        if (time == 0) {
+            throw new IllegalArgumentException("Time cannot be zero.");
+        }
         return (endValue - principal) / (time * principal);
     }
     // Finds Compound Interest Rate given principal, end value, and time
     public static double findCompoundInterestRate(double principal, double endValue, double time) {
+        if (principal == 0) {
+            throw new IllegalArgumentException("Principal cannot be zero.");
+        }
+        if (time == 0) {
+            throw new IllegalArgumentException("Time cannot be zero.");
+        }
         return Math.pow(endValue / principal, 1.0 / time) - 1;
     }
 
@@ -70,6 +82,12 @@ public class Interest {
 
     // Find out what the continuous compound interest rate is
     public static double findContinuousCompoundRate(double principal, double endValue, double time) {
+        if (principal == 0) {
+            throw new IllegalArgumentException("Principal cannot be zero.");
+        }
+        if (time == 0) {
+            throw new IllegalArgumentException("Time cannot be zero.");
+        }
         return Math.log(endValue / principal) / time;
     }
 
@@ -88,12 +106,26 @@ public class Interest {
 
     // Compute monthly compound rate
     public static double findMonthlyCompoundRate(double principal, double endValue, double years) {
+        if (principal == 0) {
+            throw new IllegalArgumentException("Principal cannot be zero.");
+        }
+        if (years == 0) {
+            throw new IllegalArgumentException("Years cannot be zero.");
+        }
         return Math.pow(endValue / principal, 1.0 / (12 * years)) - 1;
     }
     // Compute Daily Compound Rate
     public static double findDailyCompoundRate(double principal, double endValue, double years) {
+        if (principal == 0) {
+            throw new IllegalArgumentException("Principal cannot be zero.");
+        }
+        if (years == 0) {
+            throw new IllegalArgumentException("Years cannot be zero.");
+        }
         return Math.pow(endValue / principal, 1.0 / (365 * years)) - 1;
     }
+
+
 
 
 
