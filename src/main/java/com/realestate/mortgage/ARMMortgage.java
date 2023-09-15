@@ -100,11 +100,7 @@ public class ARMMortgage implements Mortgage {
 
     @Override
     public double calculateTotalCost() {
-        double totalCost = 0;
-        for (int i = 1; i <= term; i++) {
-            totalCost += calculateMonthlyPayment(i);
-        }
-        return totalCost;
+        return principal + calculateTotalInterest();
     }
 
     @Override
