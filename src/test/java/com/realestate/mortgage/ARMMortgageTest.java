@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,7 +225,20 @@ public class ARMMortgageTest {
 
     @Test
     public void testRemainingBalanceWithRateChange() {
-        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 30, "y", new ARMMortgage.RateChange(6, 0.05));
+        ARMMortgage.RateChange rateChange = new ARMMortgage.RateChange(6, 0.05); // Rate change at 6 months
+        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 30, "y", Arrays.asList(rateChange));
         assertEquals(196803.36, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan with a rate change at 6 months
+    }
+
+    @Test
+    public void testRemainingBalanceWithMultipleRateChanges() {
+        ARMMortgage.RateChange rateChange1 = new ARMMortgage.RateChange(6, 0.05);   // Rate change at 6 months
+        ARMMortgage.RateChange rateChange2 = new ARMMortgage.RateChange(12, 0.06);  // Rate change at 1 year
+        ARMMortgage.RateChange rateChange3 = new ARMMortgage.RateChange(18, 0.04);  // Rate change at 1.5 years
+        ARMMortgage.RateChange rateChange4 = new ARMMortgage.RateChange(24, 0.05);  // Rate change at 2 years
+        ARMMortgage.RateChange rateChange5 = new ARMMortgage.RateChange(30, 0.06);  // Rate change at 2.5 years
+        List<ARMMortgage.RateChange> rateChanges = Arrays.asList(rateChange1, rateChange2, rateChange3, rateChange4, rateChange5);
+        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 3, "y", rateChanges);
+        assertEquals(5336.7406 , mortgage.calculateRemainingBalance(35), DELTA);  // 3 years into the loan with rate changes at the specified intervals
     }
 }
