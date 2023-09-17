@@ -40,9 +40,9 @@ public class ARMMortgageTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCalculateRemainingBalance_ExceedingMonthsPaid() {
+    public void testcalculateRemainingPayments_ExceedingMonthsPaid() {
         ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
-        mortgage.calculateRemainingBalance(361); // Given a 30-year term, this is one month beyond the term
+        mortgage.calculateRemainingPayments(361); // Given a 30-year term, this is one month beyond the term
     }
 
     @Test
@@ -214,5 +214,17 @@ public class ARMMortgageTest {
         // Assuming there's an implicit reset back to the initial rate at month 36
         assertEquals(0.06, mortgage.getRateForMonth(35), DELTA);
         assertEquals(0.05, mortgage.getRateForMonth(36), DELTA);
+    }
+
+    @Test
+    public void testRemainingBalanceWithoutRateChange() {
+        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 30, "y");
+        assertEquals(196477.92, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan without any rate change
+    }
+
+    @Test
+    public void testRemainingBalanceWithRateChange() {
+        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 30, "y", new ARMMortgage.RateChange(6, 0.05));
+        assertEquals(196803.36, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan with a rate change at 6 months
     }
 }

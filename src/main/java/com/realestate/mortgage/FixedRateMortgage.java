@@ -8,7 +8,6 @@ public class FixedRateMortgage extends AbstractMortgage{
         setTerm(term, termType);
     }
 
-
     public double calculateMonthlyPayment() {
         double monthlyInterestRate = interestRate / 12;
         return principal * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -term));
@@ -24,9 +23,22 @@ public class FixedRateMortgage extends AbstractMortgage{
         return monthlyPayment * term;
     }
 
-    public double calculateRemainingBalance(int monthsPaid) {
+    public double calculateRemainingPayments(int monthsPaid) {
         double monthlyInterestRate = interestRate / 12;
         return principal * Math.pow(1 + monthlyInterestRate, monthsPaid) - calculateMonthlyPayment() * (Math.pow(1 + monthlyInterestRate, monthsPaid) - 1) / monthlyInterestRate;
+    }
+
+    public double calculateRemainingBalance(int monthsPaid) {
+        double remainingPrincipal = principal;
+        double monthlyPayment = calculateMonthlyPayment();
+
+        for (int i = 1; i <= monthsPaid; i++) {
+            double monthlyInterest = remainingPrincipal * (interestRate / 12);
+            double principalPortion = monthlyPayment - monthlyInterest;
+            remainingPrincipal -= principalPortion;
+        }
+
+        return remainingPrincipal;
     }
 
 }

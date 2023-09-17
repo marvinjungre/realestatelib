@@ -53,4 +53,6 @@ public abstract class AbstractMortgage {
     public abstract double calculateTotalCost();
 
     public abstract double calculateRemainingBalance(int monthsPaid);
+
+    public abstract double calculateRemainingPayments(int monthsPaid);
 }

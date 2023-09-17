@@ -83,13 +83,25 @@ public class ARMMortgage extends AbstractMortgage {
         return principal + calculateTotalInterest();
     }
 
-    public double calculateRemainingBalance(int monthsPaid) {
+    public double calculateRemainingPayments(int monthsPaid) {
         checkMonthValidity(monthsPaid);
         double totalPaid = 0;
         for (int i = 1; i <= monthsPaid; i++) {
             totalPaid += calculateMonthlyPayment(i);
         }
         return calculateTotalCost() - totalPaid;
+    }
+
+    public double calculateRemainingBalance(int monthsPaid) {
+        checkMonthValidity(monthsPaid);
+        double remainingPrincipal = principal;
+        for (int i = 1; i <= monthsPaid; i++) {
+            double monthlyInterestRate = getRateForMonth(i) / 12;
+            double monthlyInterest = remainingPrincipal * monthlyInterestRate;
+            double principalPortion = calculateMonthlyPayment(i) - monthlyInterest;
+            remainingPrincipal -= principalPortion;
+        }
+        return remainingPrincipal;
     }
 
     // Nested RateChange class. Month validation has to happen outside as we have no access to the object's term time

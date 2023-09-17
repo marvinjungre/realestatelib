@@ -29,7 +29,7 @@ public class FixedRateMortgageTest {
     @Test
     public void testRemainingBalanceCalculation() {
         FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
-        assertEquals(91828.73, mortgage.calculateRemainingBalance(60), DELTA);  // 5 years into the loan
+        assertEquals(91828.73, mortgage.calculateRemainingPayments(60), DELTA);  // 5 years into the loan
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -72,12 +72,26 @@ public class FixedRateMortgageTest {
     @Test
     public void testRemainingBalanceAtEndOfLoan() {
         FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
-        assertEquals(0, mortgage.calculateRemainingBalance(30*12), DELTA);
+        assertEquals(0, mortgage.calculateRemainingPayments(30*12), DELTA);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeTerm() {
         FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, -10, "y");
+    }
+
+    @Test
+    public void testRemainingBalanceAfter5Years() {
+        FixedRateMortgage mortgage = new FixedRateMortgage(200000, 0.04, 30, "y");
+        double expectedRemainingBalance = 180895.026; // this value will vary based on your formula and interest calculations
+        assertEquals(expectedRemainingBalance, mortgage.calculateRemainingBalance(60), DELTA);  // 5 years into the loan
+    }
+
+    @Test
+    public void testRemainingBalanceAfter1Year() {
+        FixedRateMortgage mortgage = new FixedRateMortgage(200000, 0.04, 30, "y");
+        double expectedRemainingBalance = 196477.927; // this value will vary based on your formula and interest calculations
+        assertEquals(expectedRemainingBalance, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan
     }
 
 
