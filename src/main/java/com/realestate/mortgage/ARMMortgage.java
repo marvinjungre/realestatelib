@@ -4,33 +4,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ARMMortgage implements Mortgage {
-    private double principal;
-    private double initialRate;
-    private int term;
+public class ARMMortgage extends AbstractMortgage {
     private List<RateChange> rateChanges; // List of RateChange objects
 
-    public ARMMortgage(double principal, double initialRate, int term, String termType, List<RateChange> rateChanges) {
+    public ARMMortgage(double principal, double interestRate, int term, String termType, List<RateChange> rateChanges) {
         setPrincipal(principal);
-        setInitialRate(initialRate);
+        setInterestRate(interestRate);
         setTerm(term, termType);
         this.rateChanges = (rateChanges != null) ? rateChanges : new ArrayList<>();
         this.rateChanges.sort(Comparator.comparingInt(RateChange::getMonth)); // Sort the list by month, otherwise higher changes out of order would be disregarded
         validateRateChanges();
     }
     // Constructor when no rate changes
-    public ARMMortgage(double principal, double initialRate, int term, String termType) {
-        this(principal, initialRate, term, termType, (List<RateChange>) null);
+    public ARMMortgage(double principal, double interestRate, int term, String termType) {
+        this(principal, interestRate, term, termType, (List<RateChange>) null);
     }
 
     // Constructor with varargs for one or more rate changes
-    public ARMMortgage(double principal, double initialRate, int term, String termType, RateChange... rateChanges) {
-        this(principal, initialRate, term, termType, Arrays.asList(rateChanges));
+    public ARMMortgage(double principal, double interestRate, int term, String termType, RateChange... rateChanges) {
+        this(principal, interestRate, term, termType, Arrays.asList(rateChanges));
     }
 
     // Return the interest rate for a specific month
     public double getRateForMonth(int month) {
-        double rate = initialRate;
+        double rate = interestRate;
         for (RateChange rc : rateChanges) {
             if (month >= rc.getMonth()) {
                 rate = rc.getRate();
@@ -53,37 +50,6 @@ public class ARMMortgage implements Mortgage {
         this.principal = principal;
     }
 
-    // Getter and Setter for initialRate
-    public double getInitialRate() {
-        return initialRate;
-    }
-
-    public void setInitialRate(double initialRate) {
-        if(initialRate <= 0) {
-            throw new IllegalArgumentException("Initial rate cannot be negative or zero.");
-        }
-        this.initialRate = initialRate;
-    }
-
-    // Getter and Setter for term (with term type consideration)
-    public int getTerm() {
-        return term;
-    }
-
-    public void setTerm(int term, String termType) {
-        if(term <= 0) {
-            throw new IllegalArgumentException("Term cannot be negative or zero.");
-        }
-        if ("y".equalsIgnoreCase(termType)) {
-            this.term = term * 12;  // Convert years to months
-        } else if ("m".equalsIgnoreCase(termType)) {
-            this.term = term;       // Term is already in months
-        } else {
-            throw new IllegalArgumentException("Invalid term type. Use 'y' for years or 'm' for months.");
-        }
-    }
-
-
     // Getter and Setter for rateChanges
     public List<RateChange> getRateChanges() {
         return rateChanges;
@@ -99,14 +65,12 @@ public class ARMMortgage implements Mortgage {
         return principal * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -term));
     }
 
-    @Override
     public double calculateMonthlyPayment() { // If no month is specified, use the first month
         int month = 1;
         double monthlyInterestRate = getRateForMonth(month) / 12;
         return principal * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -term));
     }
 
-    @Override
     public double calculateTotalInterest() {
         double totalInterest = 0;
         for (int i = 1; i <= term; i++) {
@@ -115,12 +79,10 @@ public class ARMMortgage implements Mortgage {
         return totalInterest - principal;
     }
 
-    @Override
     public double calculateTotalCost() {
         return principal + calculateTotalInterest();
     }
 
-    @Override
     public double calculateRemainingBalance(int monthsPaid) {
         checkMonthValidity(monthsPaid);
         double totalPaid = 0;

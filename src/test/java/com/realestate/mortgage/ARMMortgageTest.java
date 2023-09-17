@@ -49,7 +49,6 @@ public class ARMMortgageTest {
     public void testInitialValues() {
         ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y");
         assertEquals(100000, mortgage.getPrincipal(), DELTA);
-        assertEquals(0.05, mortgage.getInitialRate(), DELTA);
         assertEquals(360, mortgage.getTerm());
     }
 
