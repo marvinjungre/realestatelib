@@ -7,16 +7,9 @@ public class FixedRateMortgage implements Mortgage{
 
 
     public FixedRateMortgage(double principal, double interestRate, int term, String termType) {
-        this.principal = principal;
-        this.interestRate = interestRate;
-
-        if ("y".equalsIgnoreCase(termType)) {
-            this.term = term * 12;  // Convert years to months
-        } else if ("m".equalsIgnoreCase(termType)) {
-            this.term = term;       // Term is already in months
-        } else {
-            throw new IllegalArgumentException("Invalid term type. Use 'y' for years or 'm' for months.");
-        }
+        setPrincipal(principal);
+        setInterestRate(interestRate);
+        setTerm(term, termType);
     }
 
     // Constructor without termType, defaults to 'y'
@@ -25,6 +18,9 @@ public class FixedRateMortgage implements Mortgage{
     }
 
     public void setPrincipal(double principal) {
+        if(principal <= 0) {
+            throw new IllegalArgumentException("Principal cannot be negative or zero.");
+        }
         this.principal = principal;
     }
 
@@ -33,6 +29,9 @@ public class FixedRateMortgage implements Mortgage{
     }
 
     public void setInterestRate(double interestRate) {
+        if(interestRate <= 0) {
+            throw new IllegalArgumentException("Initial rate cannot be negative or zero.");
+        }
         this.interestRate = interestRate;
     }
 
@@ -41,6 +40,9 @@ public class FixedRateMortgage implements Mortgage{
     }
 
     public void setTerm(int term, String termType) {
+        if(term <= 0) {
+            throw new IllegalArgumentException("Term cannot be negative or zero.");
+        }
         if ("y".equalsIgnoreCase(termType)) {
             this.term = term * 12;  // Convert years to months
         } else if ("m".equalsIgnoreCase(termType)) {
@@ -59,7 +61,6 @@ public class FixedRateMortgage implements Mortgage{
         return principal * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -term));
     }
 
-
     @Override
     public double calculateTotalInterest() {
         double monthlyPayment = calculateMonthlyPayment();
@@ -77,6 +78,5 @@ public class FixedRateMortgage implements Mortgage{
         double monthlyInterestRate = interestRate / 12;
         return principal * Math.pow(1 + monthlyInterestRate, monthsPaid) - calculateMonthlyPayment() * (Math.pow(1 + monthlyInterestRate, monthsPaid) - 1) / monthlyInterestRate;
     }
-
 
 }
