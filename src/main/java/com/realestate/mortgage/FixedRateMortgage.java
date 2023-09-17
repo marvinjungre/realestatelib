@@ -8,10 +8,6 @@ public class FixedRateMortgage extends AbstractMortgage{
         setTerm(term, termType);
     }
 
-    // Constructor without termType, defaults to 'y'
-    public FixedRateMortgage(double principal, double interestRate, int term) {
-        this(principal, interestRate, term, "y");  // Calls the other constructor with default 'y'
-    }
 
     public double calculateMonthlyPayment() {
         double monthlyInterestRate = interestRate / 12;

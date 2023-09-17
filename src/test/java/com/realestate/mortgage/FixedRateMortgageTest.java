@@ -10,46 +10,46 @@ public class FixedRateMortgageTest {
 
     @Test
     public void testMonthlyPaymentCalculation() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30);
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
         assertEquals(536.82, mortgage.calculateMonthlyPayment(), DELTA);
     }
 
     @Test
     public void testTotalInterestCalculation() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30);
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
         assertEquals(93255.78, mortgage.calculateTotalInterest(), DELTA);
     }
 
     @Test
     public void testTotalCostCalculation() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30);
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
         assertEquals(193255.78, mortgage.calculateTotalCost(), DELTA);
     }
 
     @Test
     public void testRemainingBalanceCalculation() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30);
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
         assertEquals(91828.73, mortgage.calculateRemainingBalance(60), DELTA);  // 5 years into the loan
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativePrincipal() {
-        new FixedRateMortgage(-100000, 0.05, 30);
+        new FixedRateMortgage(-100000, 0.05, 30, "y");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testZeroPrincipal() {
-        new FixedRateMortgage(0, 0.05, 30);
+        new FixedRateMortgage(0, 0.05, 30, "y");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeInterestRate() {
-        new FixedRateMortgage(100000, -0.05, 30);
+        new FixedRateMortgage(100000, -0.05, 30, "y");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testZeroInterestRate() {
-        new FixedRateMortgage(100000, 0, 30);
+        new FixedRateMortgage(100000, 0, 30, "y");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -65,19 +65,19 @@ public class FixedRateMortgageTest {
     }
     @Test
     public void testLargePrincipalSmallInterestRate() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(Double.MAX_VALUE, 0.00000001, 30);
+        FixedRateMortgage mortgage = new FixedRateMortgage(Double.MAX_VALUE, 0.00000001, 30, "y");
         assertTrue(mortgage.calculateMonthlyPayment() > 0);
     }
 
     @Test
     public void testRemainingBalanceAtEndOfLoan() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30);
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 30, "y");
         assertEquals(0, mortgage.calculateRemainingBalance(30*12), DELTA);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeTerm() {
-        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, -10);
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, -10, "y");
     }
 
 
