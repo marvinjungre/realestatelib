@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 public class ARMMortgage extends AbstractMortgage {
     private List<RateChange> rateChanges; // List of RateChange objects
+    private List<AmortizationEntry> cachedSchedule = null;
 
     public ARMMortgage(double principal, double interestRate, int term, String termType, List<RateChange> rateChanges) {
         setPrincipal(principal);
@@ -59,10 +60,11 @@ public class ARMMortgage extends AbstractMortgage {
         this.rateChanges = rateChanges;
     }
 
-    public double calculateMonthlyPayment(int month) { // As monthly payments change, the month should be specified
+    public double calculateMonthlyPayment(int month) {
         checkMonthValidity(month);
-        double monthlyInterestRate = getRateForMonth(month) / 12;
-        return principal * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -term));
+        List<AmortizationEntry> schedule = generateAmortizationSchedule();
+        // Since the list is 0-indexed, we access the entry using month-1.
+        return schedule.get(month - 1).getPayment();
     }
 
     public double calculateMonthlyPayment() { // If no month is specified, use the first month
@@ -72,11 +74,12 @@ public class ARMMortgage extends AbstractMortgage {
     }
 
     public double calculateTotalInterest() {
+        List<AmortizationEntry> schedule = generateAmortizationSchedule();
         double totalInterest = 0;
-        for (int i = 1; i <= term; i++) {
-            totalInterest += calculateMonthlyPayment(i);
+        for (AmortizationEntry entry : schedule) {
+            totalInterest += entry.getInterestPaid();
         }
-        return totalInterest - principal;
+        return totalInterest;
     }
 
     public double calculateTotalCost() {
@@ -85,24 +88,57 @@ public class ARMMortgage extends AbstractMortgage {
 
     public double calculateRemainingPayments(int monthsPaid) {
         checkMonthValidity(monthsPaid);
+        List<AmortizationEntry> schedule = generateAmortizationSchedule();
         double totalPaid = 0;
-        for (int i = 1; i <= monthsPaid; i++) {
-            totalPaid += calculateMonthlyPayment(i);
+        for (int i = 0; i < monthsPaid; i++) {
+            totalPaid += schedule.get(i).getPayment();
         }
         return calculateTotalCost() - totalPaid;
     }
 
     public double calculateRemainingBalance(int monthsPaid) {
         checkMonthValidity(monthsPaid);
-        double remainingPrincipal = principal;
-        for (int i = 1; i <= monthsPaid; i++) {
-            double monthlyInterestRate = getRateForMonth(i) / 12;
-            double monthlyInterest = remainingPrincipal * monthlyInterestRate;
-            double principalPortion = calculateMonthlyPayment(i) - monthlyInterest;
-            remainingPrincipal -= principalPortion;
-        }
-        return remainingPrincipal;
+        List<AmortizationEntry> schedule = generateAmortizationSchedule();
+
+        return schedule.get(monthsPaid - 1).getEndingBalance();
     }
+
+    public List<AmortizationEntry> generateAmortizationSchedule() {
+        if (cachedSchedule != null) {
+            return cachedSchedule;
+        }
+        List<AmortizationEntry> schedule = new ArrayList<>();
+
+        double currentBalance = principal;
+
+        for (int i = 1; i <= term; i++) {
+            double monthlyInterestRate = getRateForMonth(i) / 12;
+            int remainingTerm = term - i + 1; // Remaining periods, including the current month
+            double interestForTheMonth = currentBalance * monthlyInterestRate;
+
+            // Calculate the monthly payment based on the current balance and the remaining term
+            double monthlyPayment = currentBalance * monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -remainingTerm));
+
+            double principalForTheMonth = monthlyPayment - interestForTheMonth;
+            double endingBalance = currentBalance - principalForTheMonth;
+
+            AmortizationEntry entry = new AmortizationEntry();
+            entry.setBeginningBalance(currentBalance);
+            entry.setPayment(monthlyPayment);
+            entry.setInterestPaid(interestForTheMonth);
+            entry.setPrincipalPaid(principalForTheMonth);
+            entry.setEndingBalance(endingBalance);
+
+            schedule.add(entry);
+
+            currentBalance = endingBalance;
+        }
+        cachedSchedule = schedule;
+        return schedule;
+    }
+
+
+    //------------------------------------- Helper classes/ methods -------------------------------------//
 
     // Nested RateChange class. Month validation has to happen outside as we have no access to the object's term time
     public static class RateChange {
@@ -122,16 +158,6 @@ public class ARMMortgage extends AbstractMortgage {
         }
         public double getRate() {
             return rate;
-        }
-    }
-
-    // Checks if the input month is valid
-    private void checkMonthValidity(int month){
-        if (month <= 0) {
-            throw new IllegalArgumentException("Month cannot be negative or zero.");
-        }
-        if (month > this.getTerm()) {
-            throw new IllegalArgumentException("Month cannot exceed term time.");
         }
     }
 

@@ -1,4 +1,6 @@
 package com.realestate.mortgage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FixedRateMortgage extends AbstractMortgage{
 
@@ -24,11 +26,14 @@ public class FixedRateMortgage extends AbstractMortgage{
     }
 
     public double calculateRemainingPayments(int monthsPaid) {
+        checkMonthValidity(monthsPaid);
         double monthlyInterestRate = interestRate / 12;
         return principal * Math.pow(1 + monthlyInterestRate, monthsPaid) - calculateMonthlyPayment() * (Math.pow(1 + monthlyInterestRate, monthsPaid) - 1) / monthlyInterestRate;
     }
 
+
     public double calculateRemainingBalance(int monthsPaid) {
+        checkMonthValidity(monthsPaid);
         double remainingPrincipal = principal;
         double monthlyPayment = calculateMonthlyPayment();
 
@@ -41,4 +46,29 @@ public class FixedRateMortgage extends AbstractMortgage{
         return remainingPrincipal;
     }
 
+    public List<AmortizationEntry> generateAmortizationSchedule() {
+        List<AmortizationEntry> schedule = new ArrayList<>();
+
+        double currentBalance = principal;
+        double monthlyPayment = calculateMonthlyPayment();
+
+        for (int i = 0; i < term; i++) {
+            double interestForTheMonth = currentBalance * (interestRate / 12);
+            double principalForTheMonth = monthlyPayment - interestForTheMonth;
+            double endingBalance = currentBalance - principalForTheMonth;
+
+            AmortizationEntry entry = new AmortizationEntry();
+            entry.setBeginningBalance(currentBalance);
+            entry.setPayment(monthlyPayment);
+            entry.setInterestPaid(interestForTheMonth);
+            entry.setPrincipalPaid(principalForTheMonth);
+            entry.setEndingBalance(endingBalance);
+
+            schedule.add(entry);
+
+            currentBalance = endingBalance;
+        }
+
+        return schedule;
+    }
 }

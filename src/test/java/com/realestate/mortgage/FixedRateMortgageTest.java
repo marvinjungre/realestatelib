@@ -1,7 +1,9 @@
 package com.realestate.mortgage;
-
+import com.realestate.mortgage.AbstractMortgage.AmortizationEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import java.util.List;
 import org.junit.Test;
 
 public class FixedRateMortgageTest {
@@ -94,6 +96,28 @@ public class FixedRateMortgageTest {
         assertEquals(expectedRemainingBalance, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan
     }
 
+    @Test
+    public void testAmortizationScheduleForThreeYears() {
+        // Initialize a 3-year mortgage with some test values
+        FixedRateMortgage mortgage = new FixedRateMortgage(100000, 0.05, 3 * 12, "m"); // Using 5% annual interest for simplicity
 
+        // Generate the amortization schedule
+        List<AmortizationEntry> schedule = mortgage.generateAmortizationSchedule();
 
+        // Validate the schedule
+        assertNotNull(schedule);
+        assertEquals(3 * 12, schedule.size()); // 3 years of monthly payments
+
+        // As a basic check, validate the final entry
+        AmortizationEntry finalEntry = schedule.get(schedule.size() - 1);
+        assertEquals(0, finalEntry.getEndingBalance(), DELTA);
+    }
+
+    @Test
+    public void testPrintAmortizationSchedule() {
+        FixedRateMortgage mortgage = new FixedRateMortgage(200000, 0.04, 30, "y");
+        mortgage.printAmortizationSchedule();
+    }
 }
+
+

@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import com.realestate.mortgage.ARMMortgage.RateChange;
 
 public class ARMMortgageTest {
 
@@ -22,7 +23,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testCalculateMonthlyPayment_SingleRateChange() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         double monthlyPaymentMonth11 = mortgage.calculateMonthlyPayment(11);
         double monthlyPaymentMonth12 = mortgage.calculateMonthlyPayment(12);
         assertEquals(536.82, monthlyPaymentMonth11, DELTA); // Before rate change
@@ -31,7 +32,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testCalculateMonthlyPayment_MultipleRateChanges() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06), new ARMMortgage.RateChange(24, 0.07));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06), new RateChange(24, 0.07));
         double monthlyPaymentMonth11 = mortgage.calculateMonthlyPayment(11);
         double monthlyPaymentMonth13 = mortgage.calculateMonthlyPayment(13);
         double monthlyPaymentMonth25 = mortgage.calculateMonthlyPayment(25);
@@ -42,7 +43,7 @@ public class ARMMortgageTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testcalculateRemainingPayments_ExceedingMonthsPaid() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         mortgage.calculateRemainingPayments(361); // Given a 30-year term, this is one month beyond the term
     }
 
@@ -55,7 +56,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testRateChangeEffect() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         // Before any rate change
         assertEquals(0.05, mortgage.getRateForMonth(11), DELTA);
         // After the rate change
@@ -106,7 +107,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testRateChangeOrderEffect() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(24, 0.07), new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(24, 0.07), new RateChange(12, 0.06));
         // Before any rate change
         assertEquals(0.05, mortgage.getRateForMonth(11), DELTA);
         // After the first rate change
@@ -118,16 +119,16 @@ public class ARMMortgageTest {
     @Test
     public void testSetRateChangesAfterInitialization() {
         ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y");
-        List<ARMMortgage.RateChange> rateChanges = new ArrayList<>();
-        rateChanges.add(new ARMMortgage.RateChange(12, 0.06));
+        List<RateChange> rateChanges = new ArrayList<>();
+        rateChanges.add(new RateChange(12, 0.06));
         mortgage.setRateChanges(rateChanges);
         assertEquals(0.06, mortgage.getRateForMonth(12), DELTA);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRateChangeBeyondTermLimit() {
-        List<ARMMortgage.RateChange> rateChanges = new ArrayList<>();
-        rateChanges.add(new ARMMortgage.RateChange(361, 0.06));
+        List<RateChange> rateChanges = new ArrayList<>();
+        rateChanges.add(new RateChange(361, 0.06));
         new ARMMortgage(100000, 0.05, 30, "y", rateChanges);
     }
 
@@ -140,7 +141,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testCalculateTotalInterestWithRateDecrease() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.04));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.04));
         double totalInterest = mortgage.calculateTotalInterest();
         assertTrue(totalInterest > 0);
     }
@@ -154,7 +155,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testCalculateTotalCostWithRateIncrease() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         double totalInterest = mortgage.calculateTotalInterest();
         double totalCost = mortgage.calculateTotalCost();
         assertEquals(100000 + totalInterest, totalCost, DELTA);
@@ -162,7 +163,7 @@ public class ARMMortgageTest {
 
     @Test
     public void testCalculateMonthlyPayment_ZeroRateChange() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.05));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.05));
         double monthlyPaymentMonth11 = mortgage.calculateMonthlyPayment(11);
         double monthlyPaymentMonth12 = mortgage.calculateMonthlyPayment(12);
         assertEquals(536.82, monthlyPaymentMonth11, DELTA);
@@ -171,28 +172,28 @@ public class ARMMortgageTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeRateChangeException() {
-        new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, -0.05));
+        new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, -0.05));
     }
 
     @Test
     public void testRateChangeFirstMonthEffect() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(1, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(1, 0.06));
         assertEquals(0.06, mortgage.getRateForMonth(1), DELTA);
     }
 
     @Test
     public void testResetRateChanges() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         assertEquals(0.06, mortgage.getRateForMonth(12), DELTA);
-        List<ARMMortgage.RateChange> rateChanges = new ArrayList<>();
-        rateChanges.add(new ARMMortgage.RateChange(12, 0.07));
+        List<RateChange> rateChanges = new ArrayList<>();
+        rateChanges.add(new RateChange(12, 0.07));
         mortgage.setRateChanges(rateChanges);
         assertEquals(0.07, mortgage.getRateForMonth(12), DELTA);
     }
 
     @Test
     public void testCompoundingEffectWithRateChange() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         double totalInterestWithoutRateChange = mortgage.calculateTotalInterest();
         ARMMortgage mortgageWithRateChange = new ARMMortgage(100000, 0.05, 30, "y");
         double totalInterestWithRateChange = mortgageWithRateChange.calculateTotalInterest();
@@ -201,17 +202,17 @@ public class ARMMortgageTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testDuplicateRateChangesInitialization() {
-        new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06), new ARMMortgage.RateChange(12, 0.07));
+        new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06), new RateChange(12, 0.07));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeRateChange() {
-        new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, -0.02));
+        new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, -0.02));
     }
 
     @Test
     public void testRateResetAfterCertainPeriod() {
-        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new ARMMortgage.RateChange(12, 0.06));
+        ARMMortgage mortgage = new ARMMortgage(100000, 0.05, 30, "y", new RateChange(12, 0.06));
         // Assuming there's an implicit reset back to the initial rate at month 36
         assertEquals(0.06, mortgage.getRateForMonth(35), DELTA);
         assertEquals(0.05, mortgage.getRateForMonth(36), DELTA);
@@ -225,20 +226,56 @@ public class ARMMortgageTest {
 
     @Test
     public void testRemainingBalanceWithRateChange() {
-        ARMMortgage.RateChange rateChange = new ARMMortgage.RateChange(6, 0.05); // Rate change at 6 months
+        RateChange rateChange = new RateChange(6, 0.05); // Rate change at 6 months
         ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 30, "y", Arrays.asList(rateChange));
-        assertEquals(196803.36, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan with a rate change at 6 months
+        assertEquals(196812.506, mortgage.calculateRemainingBalance(12), DELTA);  // 1 year into the loan with a rate change at 6 months
     }
 
     @Test
     public void testRemainingBalanceWithMultipleRateChanges() {
-        ARMMortgage.RateChange rateChange1 = new ARMMortgage.RateChange(6, 0.05);   // Rate change at 6 months
-        ARMMortgage.RateChange rateChange2 = new ARMMortgage.RateChange(12, 0.06);  // Rate change at 1 year
-        ARMMortgage.RateChange rateChange3 = new ARMMortgage.RateChange(18, 0.04);  // Rate change at 1.5 years
-        ARMMortgage.RateChange rateChange4 = new ARMMortgage.RateChange(24, 0.05);  // Rate change at 2 years
-        ARMMortgage.RateChange rateChange5 = new ARMMortgage.RateChange(30, 0.06);  // Rate change at 2.5 years
-        List<ARMMortgage.RateChange> rateChanges = Arrays.asList(rateChange1, rateChange2, rateChange3, rateChange4, rateChange5);
+        RateChange rateChange1 = new RateChange(6, 0.05);   // Rate change at 6 months
+        RateChange rateChange2 = new RateChange(12, 0.06);  // Rate change at 1 year
+        RateChange rateChange3 = new RateChange(18, 0.04);  // Rate change at 1.5 years
+        RateChange rateChange4 = new RateChange(24, 0.05);  // Rate change at 2 years
+        RateChange rateChange5 = new RateChange(30, 0.06);  // Rate change at 2.5 years
+        List<RateChange> rateChanges = Arrays.asList(rateChange1, rateChange2, rateChange3, rateChange4, rateChange5);
         ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 3, "y", rateChanges);
-        assertEquals(5336.7406 , mortgage.calculateRemainingBalance(35), DELTA);  // 3 years into the loan with rate changes at the specified intervals
+        assertEquals(5971.986 , mortgage.calculateRemainingBalance(35), DELTA);  // 3 years into the loan with rate changes at the specified intervals
+    }
+
+    @Test
+    public void testGenerateAmortizationScheduleWithRateChanges() {
+        RateChange rateChange1 = new RateChange(12, 0.05);  // Change to 5% after 1 year
+        RateChange rateChange2 = new RateChange(24, 0.06);  // Change to 6% after 2 years
+        RateChange rateChange3 = new RateChange(36, 0.04);  // Change back to 4% after 3 years
+
+        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 360, "m", rateChange1, rateChange2, rateChange3);
+        List<ARMMortgage.AmortizationEntry> schedule = mortgage.generateAmortizationSchedule();
+        
+        // Check the first month's values
+        assertEquals(200000, schedule.get(0).getBeginningBalance(), DELTA);
+        // You can continue to add more assertions here for other fields of the first entry
+
+        // Loop through each entry in the schedule and validate
+        for (int i = 0; i < schedule.size(); i++) {
+            ARMMortgage.AmortizationEntry entry = schedule.get(i);
+
+            double expectedInterest = entry.getBeginningBalance() * mortgage.getRateForMonth(i + 1) / 12;
+            assertEquals(expectedInterest, entry.getInterestPaid(), DELTA);
+
+            double expectedPrincipal = entry.getPayment() - entry.getInterestPaid();
+            assertEquals(expectedPrincipal, entry.getPrincipalPaid(), DELTA);
+
+            double expectedEndingBalance = entry.getBeginningBalance() - entry.getPrincipalPaid();
+            assertEquals(expectedEndingBalance, entry.getEndingBalance(), DELTA);
+
+            // Check if the ending balance of this month is the starting balance of next month
+            if (i < schedule.size() - 1) { // Skip for the last entry
+                assertEquals(entry.getEndingBalance(), schedule.get(i + 1).getBeginningBalance(), DELTA);
+            }
+        }
+
+        // Check that the mortgage balance is zero at the end of the term
+        assertEquals(0, schedule.get(schedule.size() - 1).getEndingBalance(), DELTA);
     }
 }
