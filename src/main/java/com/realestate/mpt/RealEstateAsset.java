@@ -16,7 +16,7 @@ public class RealEstateAsset {
     public RealEstateAsset(String propertyId, double annualRentalIncome,
                            double annualAppreciation, double annualExpenses,
                            double initialPropertyValue, List<Double> historicalReturns) {
-        setPropertyId(propertyId);
+        this.propertyId = propertyId;
         setAnnualRentalIncome(annualRentalIncome);
         setAnnualAppreciation(annualAppreciation);
         setAnnualExpenses(annualExpenses);
@@ -26,10 +26,21 @@ public class RealEstateAsset {
     }
 
     public RealEstateAsset(String propertyId, double expectedReturn, List<Double> historicalReturns) {
-        setPropertyId(propertyId);
+        this.propertyId = propertyId;
         this.expectedReturn = expectedReturn;
         setHistoricalReturns(historicalReturns);
     }
+
+    public RealEstateAsset(double expectedReturn, List<Double> historicalReturns){
+        this("", expectedReturn, historicalReturns);
+    }
+
+    public RealEstateAsset(double annualRentalIncome,
+                           double annualAppreciation, double annualExpenses,
+                           double initialPropertyValue, List<Double> historicalReturns) {
+        this("", annualRentalIncome, annualAppreciation, annualExpenses, initialPropertyValue, historicalReturns);
+    }
+
 
     // Compute expected return based on provided parameters
     private void computeExpectedReturn() {
@@ -65,11 +76,15 @@ public class RealEstateAsset {
         return initialPropertyValue;
     }
 
-    // Setters with appropriate validation
+    // Setters with appropriate validation.
+
+    /* Technically, it would be ideal if IDs exist and are unique, but this is not needed
+    for every function, so we will not enforce it here. You won't get the full value out of
+    the recommendations if you don't include property IDs.*/
     public void setPropertyId(String propertyId) {
-        if (propertyId == null || propertyId.trim().isEmpty()) {
+        /*if (propertyId == null || propertyId.trim().isEmpty()) {
             throw new IllegalArgumentException("Property ID cannot be null or empty.");
-        }
+        }*/
         this.propertyId = propertyId;
     }
 

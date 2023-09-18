@@ -2,27 +2,58 @@ package com.realestate.mpt;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Map;
 
-class PortfolioUtils {
+public class PortfolioUtils {
 
-    public static void validateHistoricalReturnsLength(List<RealEstateAsset> assets) {
+    // Extractor function to get the list of RealEstateAsset from the map
+    public static List<RealEstateAsset> extractAssetsFromMap(Map<RealEstateAsset, Double> assetsMap) {
+        return new ArrayList<>(assetsMap.keySet());
+    }
+
+    // Function to validate the historical returns length for assets in the map
+    public static boolean validateHistoricalReturnsLength(Map<RealEstateAsset, Double> assetsMap) {
+        List<RealEstateAsset> assetsList = extractAssetsFromMap(assetsMap);
+        return validateHistoricalReturnsLength(assetsList);
+    }
+
+    public static boolean validateHistoricalReturnsLength(List<RealEstateAsset> assets) {
         if (assets == null || assets.isEmpty()) {
-            throw new IllegalArgumentException("Assets list cannot be null or empty.");
+            return false;
         }
 
         int referenceSize = assets.get(0).getHistoricalReturns().size();
 
         for (RealEstateAsset asset : assets) {
             if (asset.getHistoricalReturns().size() != referenceSize) {
-                throw new IllegalArgumentException("Mismatch in historical returns length detected. Expected size: " + referenceSize + ", but found size: " + asset.getHistoricalReturns().size() + " for asset ID: " + asset.getPropertyId());
+                return false;
             }
         }
+        return true;
+    }
+
+    public static List<Double> helpComputeWeights(List<Double> assetValues) {
+        if (assetValues == null || assetValues.isEmpty()) {
+            throw new IllegalArgumentException("Asset values list cannot be null or empty.");
+        }
+
+        double totalValue = assetValues.stream().mapToDouble(Double::doubleValue).sum();
+
+        if (totalValue == 0) {
+            throw new IllegalArgumentException("Total asset value cannot be zero.");
+        }
+
+        return assetValues.stream()
+                .map(value -> value / totalValue)
+                .collect(Collectors.toList());
     }
 
     public static double[][] computeCovarianceMatrix(List<RealEstateAsset> assets) {
         // Extract historical returns from assets
-        validateHistoricalReturnsLength(assets);
         int n = assets.size();
         int m = assets.get(0).getHistoricalReturns().size();  // Assuming all assets have same number of historical returns
         double[][] returns = new double[m][n];
@@ -41,5 +72,7 @@ class PortfolioUtils {
 
         return covMatrix.getData();
     }
+
+
 }
 
