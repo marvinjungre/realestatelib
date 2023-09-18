@@ -1,5 +1,5 @@
 package com.realestate.mpt;
-
+import java.util.Collections;
 import java.util.List;
 
 public class RealEstateAsset {
@@ -46,7 +46,7 @@ public class RealEstateAsset {
     }
 
     public List<Double> getHistoricalReturns() {
-        return historicalReturns;
+        return Collections.unmodifiableList(historicalReturns);
     }
 
     public double getAnnualRentalIncome() {
