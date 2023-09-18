@@ -153,7 +153,7 @@ public class ARMMortgage extends AbstractMortgage {
     // within the static method
     private void validateRateChanges() {
         for (RateChange rc : rateChanges) {
-            if (rc.getMonth() < 0 || rc.getMonth() > this.term) {
+            if (rc.getMonth() < 0 || rc.getMonth() > getTerm()) {
                 throw new IllegalArgumentException("RateChange month is outside of the mortgage term range.");
             }
         }

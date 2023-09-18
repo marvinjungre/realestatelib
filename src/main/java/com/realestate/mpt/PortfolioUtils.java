@@ -22,6 +22,7 @@ class PortfolioUtils {
 
     public static double[][] computeCovarianceMatrix(List<RealEstateAsset> assets) {
         // Extract historical returns from assets
+        validateHistoricalReturnsLength(assets);
         int n = assets.size();
         int m = assets.get(0).getHistoricalReturns().size();  // Assuming all assets have same number of historical returns
         double[][] returns = new double[m][n];
