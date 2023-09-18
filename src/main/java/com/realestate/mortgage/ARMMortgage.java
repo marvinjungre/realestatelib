@@ -39,18 +39,6 @@ public class ARMMortgage extends AbstractMortgage {
         return rate;
     }
 
-    // Getter and Setter for principal
-    public double getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(double principal) {
-        if(principal <= 0) {
-            throw new IllegalArgumentException("Principal cannot be negative or zero.");
-        }
-        this.principal = principal;
-    }
-
     // Getter and Setter for rateChanges
     public List<RateChange> getRateChanges() {
         return rateChanges;

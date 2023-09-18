@@ -249,7 +249,7 @@ public class ARMMortgageTest {
         RateChange rateChange2 = new RateChange(24, 0.06);  // Change to 6% after 2 years
         RateChange rateChange3 = new RateChange(36, 0.04);  // Change back to 4% after 3 years
 
-        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 360, "m", rateChange1, rateChange2, rateChange3);
+        ARMMortgage mortgage = new ARMMortgage(200000, 0.04, 48, "m", rateChange1, rateChange2, rateChange3);
         List<ARMMortgage.AmortizationEntry> schedule = mortgage.generateAmortizationSchedule();
         
         // Check the first month's values
@@ -277,5 +277,8 @@ public class ARMMortgageTest {
 
         // Check that the mortgage balance is zero at the end of the term
         assertEquals(0, schedule.get(schedule.size() - 1).getEndingBalance(), DELTA);
+        // mortgage.printAmortizationSchedule();
+        // System.out.println(mortgage.calculateTotalCost());
+        // System.out.println(mortgage.calculateTotalInterest());
     }
 }

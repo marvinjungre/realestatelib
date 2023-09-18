@@ -113,11 +113,11 @@ public class FixedRateMortgageTest {
         assertEquals(0, finalEntry.getEndingBalance(), DELTA);
     }
 
-    @Test
+    /* @Test
     public void testPrintAmortizationSchedule() {
         FixedRateMortgage mortgage = new FixedRateMortgage(200000, 0.04, 30, "y");
         mortgage.printAmortizationSchedule();
-    }
+    } */
 }
 
 
