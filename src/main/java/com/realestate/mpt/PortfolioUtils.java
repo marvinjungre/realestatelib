@@ -3,9 +3,13 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
-import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+// import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.interpolation.DividedDifferenceInterpolator;
+import org.apache.commons.math3.analysis.interpolation.NevilleInterpolator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -67,7 +71,11 @@ public class PortfolioUtils {
                 .orElse(0);
 
         // Prepare interpolator
-        LinearInterpolator interpolator = new LinearInterpolator(); // careful we are not performing "pure" Linear Interpolation here
+        // LinearInterpolator interpolator = new LinearInterpolator();
+        // SplineInterpolator interpolator = new SplineInterpolator();
+        // DividedDifferenceInterpolator interpolator = new DividedDifferenceInterpolator();
+        NevilleInterpolator interpolator = new NevilleInterpolator();
+
 
         for (RealEstateAsset asset : assets) {
             List<Double> history = asset.getHistoricalReturns();
@@ -80,15 +88,16 @@ public class PortfolioUtils {
 
                 UnivariateFunction function = interpolator.interpolate(xvals, yvals);
 
-                List<Double> newHistory = IntStream.range(0, maxHistoryLength)
-                        .mapToObj(i -> {
-                            if (i < history.size()) {
-                                return history.get(i); // Return the original data if it exists
-                            }
-                            double interpolatedIndex = i * (history.size() - 1.0) / (maxHistoryLength - 1.0); // resampling happens here
-                            return function.value(interpolatedIndex); // Interpolate for missing data
-                        })
-                        .collect(Collectors.toList());
+                List<Double> newHistory = new ArrayList<>(Collections.nCopies(maxHistoryLength, null));
+
+                for (int i = 0; i < history.size(); i++) {
+                    newHistory.set(i, history.get(i)); // Use exact data from original history
+                }
+
+                for (int i = history.size(); i < maxHistoryLength; i++) {
+                    double interpolatedIndex = i * (history.size() - 1.0) / (maxHistoryLength - 1.0); // resampling happens here
+                    newHistory.set(i, function.value(interpolatedIndex)); // Interpolate for missing data
+                }
 
                 asset.setHistoricalReturns(newHistory);
             }
@@ -96,6 +105,7 @@ public class PortfolioUtils {
 
         return assetsWeights;
     }
+
 
 
     protected static Map<RealEstateAsset, Double> cutHistoriesToShortest(Map<RealEstateAsset, Double> assetsWeights) {
