@@ -132,6 +132,7 @@ public class RealEstateAsset {
         return "RealEstateAsset { " +
                 "Property ID: '" + propertyId + '\'' +
                 ", Expected Return: " + expectedReturn +
+                ", Historical Returns: " + historicalReturns +
                 " }";
     }
 }
