@@ -29,7 +29,7 @@ A library designed for real estate-related computations. Key components:
 - `FixedRateMortgage`
 - `ARMMortgage` (Adjustable Rate Mortgage)
 
-## MPT Package
+## MPT Package (in progress)
 
 Designed for computations related to Modern Portfolio Theory.
 
