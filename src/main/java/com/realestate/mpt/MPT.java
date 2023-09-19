@@ -1,8 +1,10 @@
 package com.realestate.mpt;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
+import java.util.*;
 
 // MPT - Modern Portfolio Theory
 public class MPT {
@@ -80,11 +82,27 @@ public class MPT {
             }
         }
     }
-/*
+
     public double portfolioVolatility() {
-        // Compute portfolio volatility
+        // Ensure that the historical returns of all assets in the portfolio have the same length
+        historyCleaner();
+
+        // Get covariance matrix
+        List<RealEstateAsset> assetsList = new ArrayList<>(assetsWeights.keySet());
+        double[][] covarianceMatrix = PortfolioUtils.computeCovarianceMatrix(assetsList);
+
+        // Convert the asset weights to an array
+        double[] weightsArray = PortfolioUtils.extractWeightsFromMapAsArray(assetsWeights);
+
+        // Perform matrix multiplication: w^T * (covariance matrix) * w
+        RealMatrix covMatrix = new BlockRealMatrix(covarianceMatrix);
+        RealVector weights = new ArrayRealVector(weightsArray);
+
+        double volatilitySquared = weights.dotProduct(covMatrix.operate(weights));
+        return Math.sqrt(volatilitySquared);
     }
 
+/*
     public double sharpeRatio(double riskFreeRate) {
         // Compute Sharpe ratio
     }

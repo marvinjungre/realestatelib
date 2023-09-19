@@ -22,6 +22,15 @@ public class PortfolioUtils {
         return new ArrayList<>(assetsMap.keySet());
     }
 
+    public static List<Double> extractWeightsFromMap(Map<RealEstateAsset, Double> assetsMap) {
+        return new ArrayList<>(assetsMap.values());
+    }
+
+    public static double[] extractWeightsFromMapAsArray(Map<RealEstateAsset, Double> assetsMap) {
+        List<Double> weights = extractWeightsFromMap(assetsMap);
+        return weights.stream().mapToDouble(Double::doubleValue).toArray();
+    }
+
     // Function to validate the historical returns length for assets in the map
     public static boolean validateHistoricalReturnsLength(Map<RealEstateAsset, Double> assetsMap) {
         List<RealEstateAsset> assetsList = extractAssetsFromMap(assetsMap);
