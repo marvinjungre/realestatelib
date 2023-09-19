@@ -48,7 +48,7 @@ This class represents a portfolio based on the principles of Modern Portfolio Th
 **Methods**:
 - `addAsset()`: Adds a new asset to the portfolio with its associated weight.
 - `portfolioExpectedReturn()`: Calculates the expected return of the portfolio based on the expected returns of its assets and their weights.
-- `historyCleaner()`: Ensures that the historical returns of all assets in the portfolio have the same length. If not, the `cleanMethod` is used to adjust them.
+- `historyCleaner()`: Ensures that the historical returns of all assets in the portfolio have the same length. If not, the `historyCleaning` method (from PortfolioUtils) is used to adjust them.
 - `portfolioVolatility()`: Computes the portfolio's volatility based on the covariance matrix of its assets. This utilizes matrix multiplication operations provided by the Apache Commons Math library.
 - `setClean()`: Setter for the `cleanMethod` attribute, which ensures valid input.
 
@@ -58,7 +58,7 @@ Represents an individual real estate property, detailing its financial performan
 
 **Attributes**:
 - `propertyId`: Unique identifier for the property.
-- `expectedReturn`: Calculated rate of return on the property, derived from rental income, appreciation, expenses, and its initial value.
+- `expectedReturn`: Calculated rate of return on the property, derived from rental income, appreciation, expenses, or provide initial value.
 - `historicalReturns`: List of past returns (e.g., monthly rental income) for the asset.
 - `annualRentalIncome`: Yearly income generated from renting out the property.
 - `annualAppreciation`: Yearly increase in property value.
@@ -83,7 +83,7 @@ Represents an individual real estate property, detailing its financial performan
 
 ## PortfolioUtils Class
 
-Provides utility functions essential for managing a portfolio of `RealEstateAsset` objects. These functions include data resampling, validation, historical data extraction, and covariance matrix calculation.
+Provides utility functions essential for managing `MPT` objects. These functions include data resampling, validation, historical data extraction, and covariance matrix calculation.
 
 **Methods**:
 
