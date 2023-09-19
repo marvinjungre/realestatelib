@@ -102,12 +102,18 @@ public class MPT {
         return Math.sqrt(volatilitySquared);
     }
 
-/*
+// riskFreeRate could be the 10-year Treasury rate, for example
     public double sharpeRatio(double riskFreeRate) {
-        // Compute Sharpe ratio
+        // Ensure that the historical returns of all assets in the portfolio have the same length
+        historyCleaner();
+
+        double expectedReturn = portfolioExpectedReturn();
+        double volatility = portfolioVolatility();
+
+        return (expectedReturn - riskFreeRate) / volatility;
     }
 
-     */
+
 
     // Getters and Setters
 
