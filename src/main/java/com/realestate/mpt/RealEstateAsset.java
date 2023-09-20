@@ -2,6 +2,8 @@ package com.realestate.mpt;
 import java.util.Collections;
 import java.util.List;
 
+/* Note that we can use this to represent a real estate asset, but we can also use it to represent real estate markets,
+portfolios, or anything really. If we want to evaluate real estate markets we can e.g. use median house prices */
 public class RealEstateAsset {
 
     private String propertyId;
@@ -126,6 +128,28 @@ public class RealEstateAsset {
         }
         this.historicalReturns = historicalReturns;
     }
+
+    public double getHistoricalVolatility() {
+        if (historicalReturns == null || historicalReturns.isEmpty()) {
+            throw new IllegalStateException("Historical returns are not set.");
+        }
+
+        int size = historicalReturns.size();
+        double mean = 0.0;
+        for (double returnVal : historicalReturns) {
+            mean += returnVal;
+        }
+        mean /= size;
+
+        double variance = 0.0;
+        for (double returnVal : historicalReturns) {
+            variance += (returnVal - mean) * (returnVal - mean);
+        }
+        variance /= size;
+
+        return Math.sqrt(variance);
+    }
+
 
     @Override
     public String toString() {
