@@ -95,12 +95,7 @@ public class MPT {
         // Convert the asset weights to an array
         double[] weightsArray = PortfolioUtils.extractWeightsFromMapAsArray(assetsWeights);
 
-        // Perform matrix multiplication: w^T * (covariance matrix) * w
-        RealMatrix covMatrix = new BlockRealMatrix(covarianceMatrix);
-        RealVector weights = new ArrayRealVector(weightsArray);
-
-        double volatilitySquared = weights.dotProduct(covMatrix.operate(weights));
-        return Math.sqrt(volatilitySquared);
+        return portfolioVolatility(weightsArray, covarianceMatrix);
     }
 
     private double portfolioVolatility(double[] weights, double[][] covarianceMatrix) {
@@ -192,10 +187,6 @@ public class MPT {
             constraints.add(new LinearConstraint(weightArray, Relationship.LEQ, 1.0));
         }
 
-        // Risk constraint
-        // This is where it gets tricky and is a linear approximation
-        // We are adding a constraint that the weighted sum of the volatilities of the assets
-        // should be less than or equal to the desiredRisk
         /*double[] riskArray = new double[numAssets];
         for (int i = 0; i < numAssets; i++) {
             riskArray[i] = assetsList.get(i).getHistoricalVolatility();
