@@ -118,7 +118,6 @@ public class MPT {
                 returns[i][j] = historicalReturns.get(i);
             }
         }
-
         return returns;
     }
 
@@ -187,17 +186,12 @@ public class MPT {
             constraints.add(new LinearConstraint(weightArray, Relationship.LEQ, 1.0));
         }
 
-        /*double[] riskArray = new double[numAssets];
-        for (int i = 0; i < numAssets; i++) {
-            riskArray[i] = assetsList.get(i).getHistoricalVolatility();
-        }
-        constraints.add(new LinearConstraint(riskArray, Relationship.LEQ, desiredRisk));*/
         double[] initialEstimateOfWeights = PortfolioUtils.extractWeightsFromMapAsArray(assetsWeights);
         LinearConstraint linearizedRiskConstraint = getLinearizedRiskConstraint(initialEstimateOfWeights, desiredRisk);
 
         constraints.add(linearizedRiskConstraint);
 
-        SimplexSolver optimizer = new SimplexSolver(0.2,10000);
+        SimplexSolver optimizer = new SimplexSolver(0.0005,10000);
         PointValuePair solution = optimizer.optimize(
                 new MaxIter(10000),
                 f,
@@ -209,22 +203,6 @@ public class MPT {
         return solution.getPoint();
     }
 
-
-
-    private double[] weightsToArray(int size) {
-        double[] arr = new double[size];
-        Arrays.fill(arr, 1.0);
-        return arr;
-    }
-
-    private double[] weightsToArray(int index, double value) {
-        double[] arr = new double[assetsWeights.size()];
-        Arrays.fill(arr, 0);
-        arr[index] = value;
-        return arr;
-    }
-
-
     // Getters and Setters
 
     public void setClean(String cleanMethod) {
@@ -233,6 +211,4 @@ public class MPT {
         }
         this.cleanMethod = cleanMethod;
     }
-
-
 }

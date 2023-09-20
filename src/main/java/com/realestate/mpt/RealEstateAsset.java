@@ -129,28 +129,6 @@ public class RealEstateAsset {
         this.historicalReturns = historicalReturns;
     }
 
-    public double getHistoricalVolatility() {
-        if (historicalReturns == null || historicalReturns.isEmpty()) {
-            throw new IllegalStateException("Historical returns are not set.");
-        }
-
-        int size = historicalReturns.size();
-        double mean = 0.0;
-        for (double returnVal : historicalReturns) {
-            mean += returnVal;
-        }
-        mean /= size;
-
-        double variance = 0.0;
-        for (double returnVal : historicalReturns) {
-            variance += (returnVal - mean) * (returnVal - mean);
-        }
-        variance /= size;
-
-        return Math.sqrt(variance);
-    }
-
-
     @Override
     public String toString() {
         return "RealEstateAsset { " +

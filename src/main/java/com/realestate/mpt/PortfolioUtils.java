@@ -166,30 +166,6 @@ public class PortfolioUtils {
         return covMatrix.getData();
     }
 
-    public static double[] calculateAverageWeights(Map<RealEstateAsset, Double> assetsWeights) {
-        double[] averageWeights = new double[assetsWeights.size()];
-
-        // Calculate total weight
-        double totalWeight = assetsWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-
-        // Calculate average weight for each asset
-        int i = 0;
-        for (Double weight : assetsWeights.values()) {
-            averageWeights[i] = weight / totalWeight;
-            i++;
-        }
-
-        return averageWeights;
-    }
-
-
-    public static double[] initialGuess(int numAssets) {
-        double[] guess = new double[numAssets];
-        for (int i = 0; i < numAssets; i++) {
-            guess[i] = 1.0 / numAssets;
-        }
-        return guess;
-    }
 
 }
 
